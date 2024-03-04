@@ -1,0 +1,90 @@
+{% if customer%}
+<div class="save-btn-container">
+    {% if customer.metafields.cart.token.size > 10 %}
+      <button id="get-cart" onclick="loadSavedCart('{{ customer.metafields.cart.token }}')">Load Saved Cart</button>
+    {% endif %}
+
+  <button id="save-cart" onclick="saveCart()">Save Cart</button>
+</div>
+{% endif %}
+<style>
+  .save-btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  #get-cart, #save-cart {
+    background-color: #4CAF50;
+    border: none;
+    width: 160px;
+    color: white;
+    text-align: center;
+    padding: 5px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 8px auto;
+    cursor: pointer;
+  }
+  #get-cart {
+    background-color: rgb(16, 75, 78);
+  }
+</style>
+<script>
+
+  {% if customer%}
+    {% if customer.metafields.cart.token != '' %}
+    function loadSavedCart(value) {
+      let expires = "";
+      let date = new Date();
+      date.setTime(date.getTime() + (30*24*60*60*1000));
+      expires = "; expires=" + date.toUTCString();
+      document.cookie = "cart" + "=" + (value || "")  + expires + "; path=/";
+      location.reload();
+    }
+    {% endif %}
+  {% endif %}
+
+  function saveCart(){
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    const cart_token = getCookie('cart');
+    return new Promise((resolve, reject) => {
+      fetch('https://{{ shop.domain }}/apps/proxy-1', {
+        method: 'POST',
+        redirect: 'manual',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          type:'save',
+          cart_token
+        })
+      }).
+        then(response => {
+          console.log(response,'response');
+        }).
+        then(data => {
+          resolve(data);
+        }).
+        catch(error => {
+          console.error('There has been a problem with your fetch operation:', error);
+          reject(error);
+        });
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Save Cart",
+  "target": "section"
+}
+{% endschema %}
+

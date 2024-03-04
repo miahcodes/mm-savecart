@@ -1,0 +1,33 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "7186b66b60c59a792db68b94fef64951"
+name = "mm-savecart"
+application_url = "https://attract-midnight-thus-edges.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "mm-demo-remix-app.myshopify.com"
+include_config_on_deploy = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_customers,write_products"
+
+[auth]
+redirect_urls = [
+  "https://attract-midnight-thus-edges.trycloudflare.com/auth/callback",
+  "https://attract-midnight-thus-edges.trycloudflare.com/auth/shopify/callback",
+  "https://attract-midnight-thus-edges.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-01"
+
+[app_proxy]
+url = "https://attract-midnight-thus-edges.trycloudflare.com/proxy"
+subpath = "proxy"
+prefix = "apps"
+
+[pos]
+embedded = false
